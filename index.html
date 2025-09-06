@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather by Country</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-image: url('https://images.unsplash.com/photo-1499346030926-9a72daac6c63?auto=format&fit=crop&w=1600&q=80'); /* Blue cloud background */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #ffffff;
+      text-align: center;
+      padding: 40px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #countryInput {
+      padding: 6px;
+      font-size: 14px;
+      width: 140px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 6px 12px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 30px;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
+      max-width: 400px;
+    }
+
+    img {
+      max-width: 100px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌍 Country Weather Checker</h1>
+  <div class="input-wrapper">
+  <input type="text" id="countryInput" list="countryList" placeholder="Country name" />
+</div>
+  <datalist id="countryList">
+    <option value="India">
+    <option value="United States">
+    <option value="Canada">
+    <option value="Australia">
+    <option value="Germany">
+    <option value="France">
+    <option value="Brazil">
+    <option value="Japan">
+    <option value="China">
+    <option value="Russia">
+    <option value="South Africa">
+    <option value="United Kingdom">
+    <option value="Italy">
+    <option value="Mexico">
+    <option value="Argentina">
+    <option value="Indonesia">
+    <option value="Saudi Arabia">
+    <option value="South Korea">
+    <option value="Spain">
+    <option value="Egypt">
+  </datalist>
+  <button onclick="searchCountryWeather()">Search</button>
+
+  <div id="result"></div>
+
+  <script>
+    const weatherApiKey = 'd66c343dc106ed81601122a06bac5f99'; // Replace with your actual API key
+
+    async function searchCountryWeather() {
+      const countryName = document.getElementById('countryInput').value.trim();
+      const resultDiv = document.getElementById('result');
+
+      if (!countryName) {
+        resultDiv.innerHTML = '<p>Please enter a country name.</p>';
+        return;
+      }
+
+      try {
+        const countryRes = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
+        const countryData = await countryRes.json();
+
+        if (!countryRes.ok || !countryData[0]) {
+          resultDiv.innerHTML = `<p>Country not found.</p>`;
+          return;
+        }
+
+        const country = countryData[0];
+        const capital = country.capital?.[0] || 'Unknown';
+        const flagUrl = country.flags?.png || '';
+        const region = country.region || 'Unknown';
+        const population = country.population?.toLocaleString() || 'Unknown';
+
+        const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${weatherApiKey}&units=metric`);
+        const weatherData = await weatherRes.json();
+
+        if (!weatherRes.ok || weatherData.cod !== 200) {
+          resultDiv.innerHTML = `<p>Weather data not found for capital city: ${capital}</p>`;
+          return;
+        }
+
+        const temp = weatherData.main.temp;
+        const condition = weatherData.weather[0].main.toLowerCase();
+
+        let backgroundUrl = '';
+        if (condition.includes('rain')) {
+          backgroundUrl = 'https://images.unsplash.com/photo-1527766833261-b09c3163a791'; // Rain
+        } else if (condition.includes('snow') || temp < 5) {
+          backgroundUrl = 'https://images.unsplash.com/photo-1612204479393-7f2a9b1d3b7f'; // Digital mist
+        } else if (condition.includes('clear') || condition.includes('sun')) {
+          backgroundUrl = 'https://images.unsplash.com/photo-1502082553048-f009c37129b9'; // Sunny
+        } else {
+          backgroundUrl = 'https://images.unsplash.com/photo-1499346030926-9a72daac6c63'; // Default blue cloud
+        }
+
+        document.body.style.backgroundImage = `url('${backgroundUrl}')`;
+
+        resultDiv.innerHTML = `
+          <h2>${country.name.common} (${region})</h2>
+          <img src="${flagUrl}" alt="Flag of ${country.name.common}" />
+          <p><strong>Capital:</strong> ${capital}</p>
+          <p><strong>Population:</strong> ${population}</p>
+          <p><strong>Temperature:</strong> ${temp}°C</p>
+          <p><strong>Condition:</strong> ${weatherData.weather[0].description}</p>
+          <p><strong>Humidity:</strong> ${weatherData.main.humidity}%</p>
+          <p><strong>Wind Speed:</strong> ${weatherData.wind.speed} m/s</p>
+        `;
+      } catch (error) {
+        resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
