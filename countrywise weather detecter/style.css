@@ -1,0 +1,89 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-image: url('https://images.unsplash.com/photo-1501973801540-537f08ccae7b'); /* Cloudy background */
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+}
+
+input[type="text"] {
+  padding: 8px;
+  font-size: 14px;
+  width: 200px; /* Reduced width */
+  border-radius: 5px;
+  border: none;
+  margin-right: 10px;
+}
+
+button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: none;
+  background-color: #007BFF;
+  color: white;
+  cursor: pointer;
+}
+
+#result {
+  margin-top: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 15px;
+  border-radius: 10px;
+}
+/* Your existing styles first */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-image: url('https://images.unsplash.com/photo-1501973801540-537f08ccae7b');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+}
+
+input[type="text"] {
+  padding: 8px;
+  font-size: 14px;
+  width: 200px;
+  border-radius: 5px;
+  border: none;
+  margin-right: 10px;
+}
+
+button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: none;
+  background-color: #007BFF;
+  color: white;
+  cursor: pointer;
+}
+
+#result {
+  margin-top: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 15px;
+  border-radius: 10px;
+}
+
+/* 👇 Add this block at the end */
+.input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.input-wrapper::before {
+  content: "☁️";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.input-wrapper input[type="text"] {
+  padding-left: 30px; /* Make room for the emoji */
+}
